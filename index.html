@@ -86,6 +86,9 @@
     function displayScanResult(result) {
       const resultInput = document.getElementById('result-input');
       resultInput.value = result;
+      setTimeout(() => {
+        resultInput.value=""
+      }, 5000);
     }
   </script>
 </body>
