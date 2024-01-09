@@ -27,14 +27,16 @@
       -webkit-transform: scaleX(-1);
     }
 
-    #scan-result {
+    #result-input {
       margin: 20px;
       padding: 10px;
-      background-color: #fff;
-      border: 2px solid #333;
-      border-radius: 5px;
+      width: 80%;
+      max-width: 400px;
       font-size: 16px;
       color: #333;
+      border: 2px solid #333;
+      border-radius: 5px;
+      box-sizing: border-box;
     }
   </style>
   <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
@@ -42,7 +44,7 @@
 <body>
   <h1>Leitor de QR Code</h1>
   <video id="preview"></video>
-  <input type="text" id ="scan-result">
+  <input type="text" id="result-input" placeholder="Resultado do QR Code" readonly>
 
   <script>
     let scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
@@ -82,11 +84,8 @@
     });
 
     function displayScanResult(result) {
-      const resultContainer = document.getElementById('scan-result');
-      resultContainer.textContent = `${result}`;
-      setTimeout(() => {
-        resultContainer.textContent = '';
-      }, 3000); // Limpar o resultado após 3 segundos
+      const resultInput = document.getElementById('result-input');
+      resultInput.value = result;
     }
   </script>
 </body>
