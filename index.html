@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,19 +12,31 @@
   <script>
     let scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
 
-    scanner.addListener('scan', function(content) {
-      alert('QR Code lido: ' + content);
-      // Aqui você pode manipular a mensagem do QR Code como desejar
-    });
-
     Instascan.Camera.getCameras().then(function(cameras) {
-      if (cameras.length > 0) {
+      let selectedCamera;
+      
+      // Encontrar a câmera traseira
+      cameras.forEach(function(camera) {
+        if (camera.name.indexOf('back') !== -1) {
+          selectedCamera = camera;
+        }
+      });
+
+      if (selectedCamera) {
+        scanner.start(selectedCamera);
+      } else if (cameras.length > 0) {
+        // Se a câmera traseira não for encontrada, use a primeira câmera disponível
         scanner.start(cameras[0]);
       } else {
         console.error('Nenhuma câmera encontrada.');
       }
     }).catch(function(e) {
       console.error(e);
+    });
+
+    scanner.addListener('scan', function(content) {
+      alert('QR Code lido: ' + content);
+      // Aqui você pode manipular a mensagem do QR Code como desejar
     });
   </script>
 </body>
