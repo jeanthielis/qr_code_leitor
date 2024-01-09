@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leitor de QR Code</title>
+  <script src="https://rawgit.com/sitepoint-editors/jsqrcode/master/src/qr_packed.js"></script>
+  <script src="https://rawgit.com/sitepoint-editors/jsqrcode/master/src/grid.js"></script>
+  <script src="https://rawgit.com/sitepoint-editors/jsqrcode/master/src/version.js"></script>
+  <script src="https://rawgit.com/sitepoint-editors/jsqrcode/master/src/detector.js"></script>
+  <script src="https://rawgit.com/sitepoint-editors/jsqrcode/master/src/formatinf.js"></script>
+  <script src="https://rawgit.com/sitepoint-editors/jsqrcode/master/src/errorlevel.js"></script>
+  <script src="https://rawgit.com/sitepoint-editors/jsqrcode/master/src/bitmat.js"></script>
+  <script src="https://rawgit.com/sitepoint-editors/jsqrcode/master/src/datablock.js"></script>
+  <script src="https://rawgit.com/sitepoint-editors/jsqrcode/master/src/bmparser.js"></script>
+  <script src="https://rawgit.com/sitepoint-editors/jsqrcode/master/src/datamask.js"></script>
+  <script src="https://rawgit.com/sitepoint-editors/jsqrcode/master/src/rsdecoder.js"></script>
+  <script src="https://rawgit.com/sitepoint-editors/jsqrcode/master/src/gf256poly.js"></script>
+  <script src="https://rawgit.com/sitepoint-editors/jsqrcode/master/src/gf256.js"></script>
+  <script src="https://rawgit.com/sitepoint-editors/jsqrcode/master/src/decoder.js"></script>
+  <script src="https://rawgit.com/sitepoint-editors/jsqrcode/master/src/qrcode.js"></script>
+  <script src="https://rawgit.com/sitepoint-editors/jsqrcode/master/src/findpat.js"></script>
+  <script src="https://rawgit.com/sitepoint-editors/jsqrcode/master/src/databr.js"></script>
+</head>
+<body>
+  <h1>Leitor de QR Code</h1>
+  <video id="preview" width="100%"></video>
+  <script>
+    const html5QrcodeScanner = new Html5QrcodeScanner(
+      "preview",
+      { fps: 10, qrbox: 250 }
+    );
+
+    html5QrcodeScanner.render(onScanSuccess);
+
+    function onScanSuccess(qrCodeMessage) {
+      alert(`QR Code lido: ${qrCodeMessage}`);
+      // Aqui você pode manipular a mensagem do QR Code como desejar
+    }
+  </script>
+</body>
+</html>
