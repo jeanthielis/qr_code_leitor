@@ -1,13 +1,40 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Leitor de QR Code</title>
   <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      text-align: center;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      color: #333;
+    }
+
     #preview {
+      width: 80%;
+      max-width: 400px;
+      margin: 20px auto;
+      border: 5px solid #333;
+      border-radius: 10px;
       transform: scaleX(-1);
       -webkit-transform: scaleX(-1);
+    }
+
+    #scan-result {
+      margin: 20px;
+      padding: 10px;
+      background-color: #fff;
+      border: 2px solid #333;
+      border-radius: 5px;
+      font-size: 16px;
+      color: #333;
     }
   </style>
   <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
@@ -15,6 +42,8 @@
 <body>
   <h1>Leitor de QR Code</h1>
   <video id="preview"></video>
+  <div id="scan-result"></div>
+
   <script>
     let scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
 
@@ -49,9 +78,16 @@
     }
 
     scanner.addListener('scan', function(content) {
-      alert('QR Code lido: ' + content);
-      // Aqui você pode manipular a mensagem do QR Code como desejar
+      displayScanResult(content);
     });
+
+    function displayScanResult(result) {
+      const resultContainer = document.getElementById('scan-result');
+      resultContainer.textContent = `QR Code lido: ${result}`;
+      setTimeout(() => {
+        resultContainer.textContent = '';
+      }, 3000); // Limpar o resultado após 3 segundos
+    }
   </script>
 </body>
 </html>
