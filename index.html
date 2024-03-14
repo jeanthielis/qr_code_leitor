@@ -6,36 +6,50 @@
     <title>DataMatrix Reader</title>
 </head>
 <body>
-    <input type="file" id="fileInput" accept="image/*">
+    <video id="video" width="100%" autoplay></video>
+    <canvas id="canvas" style="display:none;"></canvas>
     <div id="result"></div>
 
     <script src="jsqrcode-combined.js"></script>
     <script>
-        document.getElementById('fileInput').addEventListener('change', function(event) {
-            var file = event.target.files[0];
-            var reader = new FileReader();
+        // Função para inicializar a câmera e o processamento de vídeo
+        async function initializeCamera() {
+            const video = document.getElementById('video');
+            const canvas = document.getElementById('canvas');
+            const resultDiv = document.getElementById('result');
 
-            reader.onload = function(event) {
-                var img = new Image();
-                img.onload = function() {
-                    var canvas = document.createElement('canvas');
-                    var ctx = canvas.getContext('2d');
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    ctx.drawImage(img, 0, 0);
-                    var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-                    var qrCode = jsQR(imageData.data, imageData.width, imageData.height);
-                    if (qrCode) {
-                        document.getElementById('result').innerText = qrCode.data;
-                    } else {
-                        document.getElementById('result').innerText = "Não foi possível encontrar um código DataMatrix na imagem.";
-                    }
-                };
-                img.src = event.target.result;
-            };
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+                video.srcObject = stream;
+                
+                video.addEventListener('loadedmetadata', () => {
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    setInterval(() => {
+                        processVideo(video, canvas, resultDiv);
+                    }, 1000 / 15); // Processa o vídeo a 15 fps
+                });
+            } catch (err) {
+                console.error('Erro ao acessar a câmera:', err);
+            }
+        }
 
-            reader.readAsDataURL(file);
-        });
+        // Função para processar o vídeo em tempo real
+        function processVideo(video, canvas, resultDiv) {
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const qrCode = jsQR(imageData.data, imageData.width, imageData.height);
+            
+            if (qrCode) {
+                resultDiv.innerText = qrCode.data;
+            } else {
+                resultDiv.innerText = "Não foi possível encontrar um código DataMatrix.";
+            }
+        }
+
+        // Inicializar a câmera ao carregar a página
+        window.onload = initializeCamera;
     </script>
 </body>
 </html>
