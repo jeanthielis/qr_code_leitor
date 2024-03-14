@@ -4,48 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DataMatrix Reader</title>
+    <script src="https://cdn.jsdelivr.net/npm/quagga/dist/quagga.min.js"></script>
 </head>
 <body>
-    <video id="video" width="100%" autoplay></video>
-    <canvas id="canvas" style="display:none;"></canvas>
     <div id="result"></div>
 
-    <script src="qrcode.js"></script>
     <script>
         // Função para inicializar a câmera e o processamento de vídeo
-        async function initializeCamera() {
-            const video = document.getElementById('video');
-            const canvas = document.getElementById('canvas');
+        function initializeCamera() {
             const resultDiv = document.getElementById('result');
 
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
-                video.srcObject = stream;
-                
-                video.addEventListener('loadedmetadata', () => {
-                    canvas.width = video.videoWidth;
-                    canvas.height = video.videoHeight;
-                    setInterval(() => {
-                        processVideo(video, canvas, resultDiv);
-                    }, 1000 / 15); // Processa o vídeo a 15 fps
-                });
-            } catch (err) {
-                console.error('Erro ao acessar a câmera:', err);
-            }
-        }
+            // Configurações do QuaggaJS
+            Quagga.init({
+                inputStream: {
+                    name: "Live",
+                    type: "LiveStream",
+                    target: document.querySelector('#video'), // Elemento de vídeo
+                    constraints: {
+                        facingMode: "environment" // Usar a câmera traseira
+                    },
+                },
+                decoder: {
+                    readers: ["datamatrix_reader"] // Leitor de DataMatrix
+                }
+            }, function(err) {
+                if (err) {
+                    console.error('Erro ao iniciar Quagga:', err);
+                    return;
+                }
+                Quagga.start();
+            });
 
-        // Função para processar o vídeo em tempo real
-        function processVideo(video, canvas, resultDiv) {
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            const qrCode = jsQR(imageData.data, imageData.width, imageData.height);
-            
-            if (qrCode) {
-                resultDiv.innerText = qrCode.data;
-            } else {
-                resultDiv.innerText = "Não foi possível encontrar um código DataMatrix.";
-            }
+            // Evento para detecção de códigos de barras
+            Quagga.onDetected(function(result) {
+                resultDiv.innerText = result.codeResult.code;
+            });
         }
 
         // Inicializar a câmera ao carregar a página
