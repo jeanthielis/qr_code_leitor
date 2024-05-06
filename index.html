@@ -1,52 +1,84 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DataMatrix Reader</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leitor de QR Code</title>
+<!-- Inclua a biblioteca jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Inclua a biblioteca instascan -->
+<script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f2f2f2;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    #preview {
+        width: 100%;
+        max-width: 320px;
+        height: auto;
+        border: 2px solid #333;
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 20px;
+    }
+
+    #message {
+        text-align: center;
+        font-size: 18px;
+        color: #333;
+    }
+
+    button {
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: #45a049;
+    }
+</style>
 </head>
 <body>
-    <video id="video" autoplay></video>
-    <canvas id="canvas" style="display:none;"></canvas>
-    <div id="result"></div>
+<div id="preview"></div>
+<div id="message">Posicione o QR code dentro da área de escaneamento.</div>
+<button id="startScan">Iniciar Escaneamento</button>
 
-    <script src="https://cdn.jsdelivr.net/npm/jsqrcode"></script>
-    <script>
-        async function initializeCamera() {
-            const video = document.getElementById('video');
-            const canvas = document.getElementById('canvas');
-            const resultDiv = document.getElementById('result');
+<script>
+    $(document).ready(function() {
+        let scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
 
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
-                video.srcObject = stream;
-                
-                video.addEventListener('loadedmetadata', () => {
-                    canvas.width = video.videoWidth;
-                    canvas.height = video.videoHeight;
-                    setInterval(() => {
-                        processVideo(video, canvas, resultDiv);
-                    }, 1000 / 15); // Processa o vídeo a 15 fps
-                });
-            } catch (err) {
-                console.error('Erro ao acessar a câmera:', err);
-            }
-        }
+        scanner.addListener('scan', function(content) {
+            alert('Código escaneado: ' + content);
+        });
 
-        function processVideo(video, canvas, resultDiv) {
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-            const qrCode = jsQR(imageData.data, imageData.width, imageData.height);
-            
-            if (qrCode) {
-                resultDiv.innerText = qrCode.data;
-            } else {
-                resultDiv.innerText = "Não foi possível encontrar um código DataMatrix.";
-            }
-        }
-
-        window.onload = initializeCamera;
-    </script>
+        $('#startScan').click(function() {
+            Instascan.Camera.getCameras().then(function(cameras) {
+                if (cameras.length > 0) {
+                    scanner.start(cameras[0]);
+                    $('#message').text('Posicione o QR code dentro da área de escaneamento.');
+                } else {
+                    console.error('Nenhuma câmera encontrada.');
+                    $('#message').text('Nenhuma câmera encontrada.');
+                }
+            }).catch(function(e) {
+                console.error(e);
+                $('#message').text('Erro ao acessar a câmera.');
+            });
+        });
+    });
+</script>
 </body>
 </html>
