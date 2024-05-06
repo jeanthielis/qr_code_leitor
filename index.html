@@ -4,8 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Leitor de QR Code</title>
-<!-- Inclua a biblioteca jQuery -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <!-- Inclua a biblioteca instascan -->
 <script src="https://rawgit.com/schmich/instascan-builds/master/instascan.min.js"></script>
 <style>
@@ -59,25 +57,25 @@
 <button id="startScan">Iniciar Escaneamento</button>
 
 <script>
-    $(document).ready(function() {
+    document.addEventListener('DOMContentLoaded', function () {
         let scanner = new Instascan.Scanner({ video: document.getElementById('preview'), mirror: false });
 
         scanner.addListener('scan', function(content) {
             alert('Código escaneado: ' + content);
         });
 
-        $('#startScan').click(function() {
+        document.getElementById('startScan').addEventListener('click', function() {
             Instascan.Camera.getCameras().then(function(cameras) {
                 if (cameras.length > 0) {
                     scanner.start(cameras[cameras.length - 1]);
-                    $('#message').text('Posicione o QR code dentro da área de escaneamento.');
+                    document.getElementById('message').textContent = 'Posicione o QR code dentro da área de escaneamento.';
                 } else {
                     console.error('Nenhuma câmera encontrada.');
-                    $('#message').text('Nenhuma câmera encontrada.');
+                    document.getElementById('message').textContent = 'Nenhuma câmera encontrada.';
                 }
             }).catch(function(e) {
                 console.error(e);
-                $('#message').text('Erro ao acessar a câmera.');
+                document.getElementById('message').textContent = 'Erro ao acessar a câmera.';
             });
         });
     });
