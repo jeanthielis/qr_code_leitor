@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,6 +15,7 @@
         margin: 0;
         padding: 0;
         display: flex;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
         height: 100vh;
@@ -34,6 +35,7 @@
         text-align: center;
         font-size: 18px;
         color: #333;
+        margin-bottom: 20px;
     }
 
     button {
@@ -58,7 +60,7 @@
 
 <script>
     $(document).ready(function() {
-        let scanner = new Instascan.Scanner({ video: document.getElementById('preview') });
+        let scanner = new Instascan.Scanner({ video: document.getElementById('preview'), mirror: false });
 
         scanner.addListener('scan', function(content) {
             alert('Código escaneado: ' + content);
@@ -67,7 +69,7 @@
         $('#startScan').click(function() {
             Instascan.Camera.getCameras().then(function(cameras) {
                 if (cameras.length > 0) {
-                    scanner.start(cameras[0]);
+                    scanner.start(cameras[cameras.length - 1]);
                     $('#message').text('Posicione o QR code dentro da área de escaneamento.');
                 } else {
                     console.error('Nenhuma câmera encontrada.');
